@@ -67,7 +67,6 @@ Dispatch one `agent` tool call per issue. Issue all calls for the current wave i
 - `agent_type: "general-purpose"`
 - `isolation: "worktree"` — each agent gets its own worktree; dirty/ahead worktrees are preserved and locked by the runtime; clean ones are torn down automatically
 - `model: "claude-sonnet-4-6"`
-- `max_tool_use_iterations: 80` — implementation needs more than 40 (edits + tests + lint + commit + PR creation)
 - Cap at **5 concurrent**. If there are more than 5 issues, batch them into waves of 5: dispatch wave 1 (5 calls in one reply), wait for all 5 to complete, then dispatch wave 2, and so on.
 
 Each agent's prompt:
