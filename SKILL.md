@@ -62,15 +62,15 @@ Dispatching <N> parallel subagents in worktrees...
 
 ### Step 3 — Parallel dispatch
 
-Use `compose` to dispatch one subagent per issue, all in parallel:
+Dispatch one `agent` tool call per issue. Issue all calls for the current wave in a **single reply** so they run in parallel.
 
-- Each node gets a `general-purpose` agent with `isolation: "worktree"`
-- Model: `claude-sonnet-4-6`
-- Max tool rounds per node: 40
-- Node timeout: 300000ms (5 min)
-- Cap at 5 concurrent. If >5 issues, run waves of 5.
+- `agent_type: "general-purpose"`
+- `isolation: "worktree"` — each agent gets its own worktree; dirty/ahead worktrees are preserved and locked by the runtime; clean ones are torn down automatically
+- `model: "claude-sonnet-4-6"`
+- `max_tool_use_iterations: 80` — implementation needs more than 40 (edits + tests + lint + commit + PR creation)
+- Cap at **5 concurrent**. If there are more than 5 issues, batch them into waves of 5: dispatch wave 1 (5 calls in one reply), wait for all 5 to complete, then dispatch wave 2, and so on.
 
-Each node's prompt:
+Each agent's prompt:
 
 ```
 You are fixing GitHub issue #<number> in <repo>.
@@ -101,7 +101,7 @@ Do NOT:
 
 ### Step 4 — Report results
 
-After all nodes complete, summarize:
+After all agent calls complete (all waves if batched), collect each agent's final message and summarize:
 
 ```
 ## Results
@@ -115,8 +115,7 @@ After all nodes complete, summarize:
 <N>/<M> issues tackled. Run `/pr-triage` to review and merge.
 ```
 
-Clean up worktrees for successful PRs (branch refs preserved on remote).
-Keep worktrees for failed attempts so the operator can inspect.
+Worktree lifecycle is managed automatically by the `agent` tool when `isolation: "worktree"` is used — no manual cleanup needed. Dirty or ahead worktrees are preserved and locked so the operator can inspect; clean worktrees are torn down by the runtime.
 
 ### That's it
 
