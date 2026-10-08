@@ -1,3 +1,7 @@
+> **Moved.** This skill now lives in [griffinwork40/software-factory](https://github.com/griffinwork40/software-factory) at `skills/tackle-issues/`, with its full history. This repo is archived.
+>
+> Install: `afk plugin install griffinwork40/software-factory`
+
 # tackle-issues
 
 An [agent-afk](https://github.com/griffinwork40/agent-afk) skill that tackles N open GitHub issues in parallel using worktree-isolated subagents, producing one PR per issue.
